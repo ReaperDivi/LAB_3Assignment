@@ -1,49 +1,65 @@
-import pandas as pd
-
-data = {
-    "Employee ID": ["161E90", "161F91", "161F99", "171E20", "171G30"],
-    "Name": ["Raman", "Himadri", "Jaya", "Tejas", "Ajay"],
-    "Age": [41, 38, 51, 30, 45],
-    "Salary(PM)": [56000, 67500, 82100, 55000, 44000]
-}
-
-df = pd.DataFrame(data)
-
-
 class Employee:
-    def _init_(self, data):
-        self.data = data
+    def _init_(self, emp_id, name, age, salary):
+        self.emp_id = emp_id
+        self.name = name
+        self.age = age
+        self.salary = salary
 
-    def sort_age(self):
-        self.sdf = self.data.sort_values(by=["Age"], ascending=True)
-        return self.sdf
+class EmployeeTable:
+    def _init_(self, employees):
+        self.employees = employees
 
-    def sort_name(self):
-        self.sdf = self.data.sort_values(by=["Name"], ascending=True)
-        return self.sdf
+    def search_by_age(self, age):
+        result = [emp for emp in self.employees if emp.age == age]
+        return result
 
-    def sort_salary(self):
-        self.sdf = self.data.sort_values(by=["Salary(PM)"], ascending=True)
-        return self.sdf
+    def search_by_name(self, name):
+        result = [emp for emp in self.employees if emp.name == name]
+        return result
 
+    def search_by_salary(self, operator, salary):
+        if operator == ">":
+            result = [emp for emp in self.employees if emp.salary > salary]
+        elif operator == "<":
+            result = [emp for emp in self.employees if emp.salary < salary]
+        elif operator == ">=":
+            result = [emp for emp in self.employees if emp.salary >= salary]
+        elif operator == "<=":
+            result = [emp for emp in self.employees if emp.salary <= salary]
+        else:
+            result = []
+        return result
 
-ob = Employee(df)
+employees = [
+    Employee("161E90", "Raman", 41, 56000),
+    Employee("161F91", "Himadri", 38, 67500),
+    Employee("161F99", "Jaya", 51, 82100),
+    Employee("171E20", "Tejas", 30, 55000),
+    Employee("171G30", "Ajay", 45, 44000),
+]
 
-choice = 1
+employee_table = EmployeeTable(employees)
 
-while choice:
-    print("0. Exit")
-    print("1. Age")
-    print("2. Name")
-    print("3. Salary")
-    choice = int(input("Enter your choice:"))
+while True:
+    print("\nSelect a search parameter:")
+    print("[1. Age, 2. Name, 3. Salary (>, <, <=, >=)]")
+    choice = int(input("Enter your choice: "))
     if choice == 1:
-        print(ob.sort_age())
+        age = int(input("Enter the age: "))
+        result = employee_table.search_by_age(age)
     elif choice == 2:
-        print(ob.sort_name())
+        name = input("Enter the name: ")
+        result = employee_table.search_by_name(name)
     elif choice == 3:
-        print(ob.sort_salary())
-    elif choice == 0:
-        print("Exiting")
+        operator = input("Enter the operator (>, <, <=, >=): ")
+        salary = int(input("Enter the salary: "))
+        result = employee_table.search_by_salary(operator, salary)
     else:
-        print("Invalid Option")
+        print("Invalid choice. Try again.")
+        continue
+    if result:
+        print("\nResult:")
+        for emp in result:
+            print(f"Employee ID: {emp.emp_id}, Name: {emp.name}, Age: {emp.age}, Salary: {emp.salary}")
+    else:
+        print("No result found.")
